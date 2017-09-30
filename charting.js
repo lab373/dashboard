@@ -5,6 +5,13 @@
 // Use cardinal
 // https://bl.ocks.org/mbostock/4342190
 (function(window) {
+  // See dbw_mkz_msgs for steering cmd rad range
+  const MAX_STEER = 8.2;
+
+  function normalize_and_shift_steer(steer) {
+    return steer/MAX_STEER + 0.5; 
+  }
+
   // Fitting solution
   const h = window.innerHeight * 0.3;
   const w = window.innerWidth * 0.5;
@@ -72,6 +79,9 @@
   let $brake = svg.append('path')
     .attr('class', 'line brake');
 
+  let $steer = svg.append('path')
+    .attr('class', 'line steer');
+
   let $rects = svg.selectAll('rect')
     .data(d3.range(num))
     .enter()
@@ -82,7 +92,7 @@
   let legend = svg.append('g')
     .attr('transform', `translate(20, 20)`)
     .selectAll('g')
-    .data([['Value', '#fff'], ['Brake', '#0ff'], ['Trailing Average - 25', '#ff0']])
+    .data([['Value', '#fff'], ['Brake', '#0ff'], ['Steer', '#ff0']])
     .enter()
       .append('g');
 
@@ -104,22 +114,27 @@
     data[time] = current_throttle;
     // brake is provided as negative value
     brake[time] = -current_brake;
-    // steer[time] = current_steer;
+    steer[time] = normalize_and_shift_steer(current_steer);
 
     deltas[time] = data[time] - data[time - 1];
 
     if (time <= num) {
       latestData = data.slice(-num);
-      latestBrake = data.slice(-num);
+      latestBrake = brake.slice(-num);
+      latestSteer = steer.slice(-num);
       latestDeltas = deltas.slice(-num);
 
     }
     else {
       latestData.shift();
       latestBrake.shift();
+      latestSteer.shift();
+  
       latestDeltas.shift();
       latestData.push(data[time]);
       latestBrake.push(brake[time]);
+      latestSteer.push(steer[time]);
+
       latestDeltas.push(deltas[time]);
     }
   }
@@ -136,6 +151,10 @@
 
     $brake
       .datum(latestBrake)
+      .attr('d', line);
+
+    $steer
+      .datum(latestSteer)
       .attr('d', line);
 
     $rects
