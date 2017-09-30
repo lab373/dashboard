@@ -63,8 +63,9 @@
   }
 
   function on_current_pose(data) {
-    let _current_pose = data.current_pose.split(' ');
-    console.log('Current pose', _current_pose); 
+    window.current_pose = data.current_pose.split(' ');
+    console.log('Current pose', window._current_pose); 
+    update_pose(window._current_pose);
   }
 
   function on_current_velocity(data) {
