@@ -22,6 +22,8 @@
   let deltas = [0];
 
   let latestData = [0];
+  let latestBrake = [0];
+  let latestSteer = [0];
 
   let latestDeltas = [0];
 
@@ -67,6 +69,9 @@
   let $data = svg.append('path')
     .attr('class', 'line data');
 
+  let $brake = svg.append('path')
+    .attr('class', 'line brake');
+
   let $rects = svg.selectAll('rect')
     .data(d3.range(num))
     .enter()
@@ -77,7 +82,7 @@
   let legend = svg.append('g')
     .attr('transform', `translate(20, 20)`)
     .selectAll('g')
-    .data([['Value', '#fff'], ['Trailing Average - 50', '#0ff'], ['Trailing Average - 25', '#ff0']])
+    .data([['Value', '#fff'], ['Brake', '#0ff'], ['Trailing Average - 25', '#ff0']])
     .enter()
       .append('g');
 
@@ -97,19 +102,24 @@
     time++;
 
     data[time] = current_throttle;
-    // brake[time] = current_brake;
+    // brake is provided as negative value
+    brake[time] = -current_brake;
     // steer[time] = current_steer;
 
     deltas[time] = data[time] - data[time - 1];
 
     if (time <= num) {
       latestData = data.slice(-num);
+      latestBrake = data.slice(-num);
       latestDeltas = deltas.slice(-num);
+
     }
     else {
       latestData.shift();
+      latestBrake.shift();
       latestDeltas.shift();
       latestData.push(data[time]);
+      latestBrake.push(brake[time]);
       latestDeltas.push(deltas[time]);
     }
   }
@@ -122,6 +132,10 @@
     // TODO: figure out how to do clean?
     $data
       .datum(latestData)
+      .attr('d', line);
+
+    $brake
+      .datum(latestBrake)
       .attr('d', line);
 
     $rects

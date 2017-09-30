@@ -31,11 +31,11 @@ text {
   stroke-width: 2px;
 }
 
-.average-50 {
+.brake {
   stroke: #0ff;
 }
 
-.average-25 {
+.steer {
   stroke: #ff0;
 }
 
