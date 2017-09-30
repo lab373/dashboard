@@ -1,15 +1,50 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-<!-- <script type="text/javascript" src="//cdn.rawgit.com/jwagner/simplex-noise.js/master/simplex-noise.js"></script> -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script type="text/javascript" charset="utf-8"></script>
 <link rel="stylesheet" type="text/css" href="./style.css">
 <body>
   <div id="main_container">
     <div id="carla-telemetry"></div>
+    <div id="dashboard">
+      <div id="carla-zoomed-view"></div>
+      <div class="control-panel">
+        <ul>
+          <!-- Proportional:
+          <input type="number", id="p-term">
+          Integral:
+          <input type="number" id="i-term">
+          Derivative:
+          <input type="number" id="d-term">
+          Accel limit:
+          <input type="number" id="accel-limit"> -->
+          <button id="send-downlink"> SEND </button>
+        </ul>
+        <ul>
+          Low Pass Filter (LPF):
+          <input id="lpf" type="checkbox" checked>
+          <br>
+          Launch Control:
+          <input id="launch-control" type="checkbox" checked>
+          <br>
+        </ul>
+      </div>
+      <div class="status">
+        <ul>
+          <li id="current-velo">0</li>
+          <li id="pose">0</li>
+        </ul>
+      </div>
+      <div class="status">
+        <ul>
+          <li>Next traffic light</li>
+          <li>Next traffic light info</li>
+        </ul>
+      </div>
+    </div>
     <div id="carla-view"></div>
-    <div id="carla-zoomed-view"></div>
   </div>
   <script type="text/javascript" src="./dashboard.js"></script>
   <script type="text/javascript" src="./handlers.js"></script>
   <script type="text/javascript" src="./charting.js"></script>
+  <script type="text/javascript" src="./index.js"></script>
 </body>

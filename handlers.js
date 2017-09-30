@@ -12,14 +12,6 @@
   window.current_velocity = '';
   window.current_image_zoomed = '';
 
-  function on_connect() {
-    console.log('Listening to ' +  document.domain + ':' + ros_server_port);
-  }
-
-  function on_disconnect() {
-    console.warn('End connection!');
-  }
-
   function on_steer_cmd(data) {
     // data.steering_angle
     console.log('Steering: ', data);
@@ -87,6 +79,24 @@
     post_image(data.image_zoomed, document.getElementById('carla-zoomed-view'));
   }
 
+  function on_disconnect() {
+    console.warn('End connection!');
+    socket.off('steer', on_steer_cmd);
+    socket.off('throttle', on_throttle_cmd);
+    socket.off('brake', on_brake_cmd)
+    socket.off('base_waypoints', on_base_waypoints);
+    socket.off('dbw_status', on_dbw_status);
+    socket.off('image', on_image);
+    socket.off('current_pose', on_current_pose);
+    socket.off('current_velocity', on_current_velocity);
+    socket.off('image_zoomed', on_image_zoomed);
+  }
+
+
+  function on_connect() {
+    console.log('Listening to ' +  document.domain + ':' + ros_server_port);
+  }
+
   socket.on('connect', on_connect);
   socket.on('disconnect', on_disconnect);
   socket.on('steer', on_steer_cmd);
@@ -98,4 +108,13 @@
   socket.on('current_pose', on_current_pose);
   socket.on('current_velocity', on_current_velocity);
   socket.on('image_zoomed', on_image_zoomed);
+
+  function emit(key, data) {
+    socket.emit(key, data);
+  }
+  
+  // socket.emit('downlink', { dl: 1 })
+  window.COMM = {
+    emit: emit
+  }
 })(window);

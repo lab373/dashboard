@@ -40,8 +40,8 @@ text {
 }
 
 #main-container {
-  display: -webkit-flex;
-  display: flex;
+  /* display: -webkit-flex; */
+  /* display: flex; */
   width: 90%;
   height: auto;
 }
@@ -53,8 +53,29 @@ text {
   /* flex-flow: row; */
 }
 
+.dashboard {
+  display: flex;
+  /* width: 100%; */
+  width: 400px;
+  /* flex-flow: row wrap; */
+}
+
 #carla-zoomed-view {
   max-width: 20%;
   height: auto; 
   margin: 10px;
+}
+
+.control-panel{
+  /* display: inline-block; */
+  /* width: 40%; */
+  /* flex-direction: row; */
+  /* align-items: center; */
+  /* flex: 1 1 30%; */
+  flex-flow: row wrap;
+  color: white;
+}
+
+.status {
+  color: white;
 }
