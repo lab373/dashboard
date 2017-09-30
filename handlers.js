@@ -13,7 +13,6 @@
   window.current_image_zoomed = '';
 
   function on_steer_cmd(data) {
-    // data.steering_angle
     console.log('Steering: ', data);
     current_steer = Number(data.steering_angle);
   }
@@ -113,7 +112,6 @@
     socket.emit(key, data);
   }
   
-  // socket.emit('downlink', { dl: 1 })
   window.COMM = {
     emit: emit
   }

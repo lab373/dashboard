@@ -3,12 +3,11 @@
   let lpf = document.getElementById('lpf');
   let lc = document.getElementById('launch-control');
 
-  let p_term = document.getElementById('p-term');
-  let i_term = document.getElementById('i-term');
-  let d_term = document.getElementById('d-term');
-  let accel_limit = document.getElementById('accel-limit');
+  // let p_term = document.getElementById('p-term');
+  // let i_term = document.getElementById('i-term');
+  // let d_term = document.getElementById('d-term');
+  // let accel_limit = document.getElementById('accel-limit');
   // .checked boolean
-  // .value
   function collect_dashboard_input() {
   }
   document.getElementById('send-downlink').addEventListener('click', function(evt) {

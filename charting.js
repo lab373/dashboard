@@ -1,9 +1,3 @@
-// https://codepen.io/browles/pen/mPMBjw
-// https://codepen.io/anon/pen/boWedg
-// https://stackoverflow.com/questions/11932767/zoomable-google-finance-style-time-series-graph-in-d3-or-rickshaw
-// Spline fitting
-// Use cardinal
-// https://bl.ocks.org/mbostock/4342190
 (function(window) {
   // See dbw_mkz_msgs for steering cmd rad range
   const MAX_STEER = 8.2;
@@ -12,7 +6,6 @@
     return steer/MAX_STEER + 0.5; 
   }
 
-  // Fitting solution
   const h = window.innerHeight * 0.3;
   const w = window.innerWidth * 0.5;
 
@@ -55,8 +48,6 @@
   let line = d3.svg.line()
     .x((d, i) => x(i + time - num))
     .y(d => y(d));
-    // Sample usage of interpolation
-    //  .interpolate('cardinal')
 
   let svg_target = d3.select('#carla-telemetry');    
   let svg = svg_target.append('svg')
@@ -144,7 +135,7 @@
 
     $xAxis
       .call(xAxis);
-    // TODO: figure out how to do clean?
+
     $data
       .datum(latestData)
       .attr('d', line);
