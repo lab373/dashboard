@@ -18,13 +18,13 @@
   // let noise = new SimplexNoise();
   let seed = 50 + 100 * Math.random();
   let data = [seed];
-  // let averages_50 = [0];
-  // let averages_25 = [0];
+
   let deltas = [seed];
 
   let latestData = [seed];
-  // let latestAverages_50 = [0];
-  // let latestAverages_25 = [0];
+
+
+  
   let latestDeltas = [seed];
 
   let x = d3.scale.linear().range([0, x_axis_len]);
@@ -69,12 +69,6 @@
   let $data = svg.append('path')
     .attr('class', 'line data');
 
-  // let $averages_50 = svg.append('path')
-  //   .attr('class', 'line average-50');
-
-  // let $averages_25 = svg.append('path')
-  //   .attr('class', 'line average-25');
-
   let $rects = svg.selectAll('rect')
     .data(d3.range(num))
     .enter()
@@ -103,91 +97,33 @@
 
   function tick() {
     time++;
-    // data[time] = data[time - 1] + noise.noise2D(seed, time / 2);
-    // data[time] = Math.max(data[time], 0);
 
     data[time] = current_throttle;
-
-    // if (time <= 50) {
-    //   let a = 0;
-    //   for (let j = 0; j < time; j++) {
-    //     a += data[time - j];
-    //   }
-    //   a /= 50;
-    //   averages_50[time] = a;
-    // }
-    // else {
-    //   let a = averages_50[time - 1] * 50 - data[time - 50];
-    //   a += data[time];
-    //   a /= 50;
-    //   averages_50[time] = a;
-    // }
-
-    // if (time <= 25) {
-    //   let a = 0;
-    //   for (let j = 0; j < time; j++) {
-    //     a += data[time - j];
-    //   }
-    //   a /= 25;
-    //   averages_25[time] = a;
-    // }
-    // else {
-    //   let a = averages_25[time - 1] * 25 - data[time - 25];
-    //   a += data[time];
-    //   a /= 25;
-    //   averages_25[time] = a;
-    // }
 
     deltas[time] = data[time] - data[time - 1];
 
     if (time <= num) {
       latestData = data.slice(-num);
-      // latestAverages_50 = averages_50.slice(-num);
-      // latestAverages_25 = averages_25.slice(-num);
       latestDeltas = deltas.slice(-num);
     }
     else {
       latestData.shift();
-      // latestAverages_50.shift();
-      // latestAverages_25.shift();
       latestDeltas.shift();
       latestData.push(data[time]);
-      // latestAverages_50.push(averages_50[time]);
-      // latestAverages_25.push(averages_25[time]);
       latestDeltas.push(deltas[time]);
     }
   }
 
   function update() {
     x.domain([time - num, time]);
-    // let yDom = d3.extent(latestData);
-    // yDom[0] = Math.max(yDom[0] - 1, 0);
-    // yDom[1] += 1;
-    // y.domain(yDom);
 
     $xAxis
       .call(xAxis);
-
-    // $yAxis
-    //   .call(yAxis);
-
     // TODO: figure out how to do clean?
     $data
       .datum(latestData)
       .attr('d', line);
 
-    // $averages_50
-    //   .datum(latestAverages_50)
-    //   .attr('d', line);
-
-    // $averages_25
-    //   .datum(latestAverages_25)
-    //   .attr('d', line);
-
-    // $rects
-    //   .attr('height', (_, i) => Math.abs(latestDeltas[i] * h / 10))
-    //   .attr('fill', (_, i) => latestDeltas[i] < 0 ? 'red' : 'green')
-    //   .attr('y', (_, i) => h - Math.abs(latestDeltas[i] * h / 10) - 42);
     $rects
       .attr('height', (_, i) => Math.abs(latestData[i]))
       .attr('fill', (_, i) => 'red')
