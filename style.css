@@ -31,17 +31,15 @@ text {
   stroke-width: 2px;
 }
 
-.average-50 {
+.brake {
   stroke: #0ff;
 }
 
-.average-25 {
+.steer {
   stroke: #ff0;
 }
 
 #main-container {
-  /* display: -webkit-flex; */
-  /* display: flex; */
   width: 90%;
   height: auto;
 }
@@ -67,11 +65,6 @@ text {
 }
 
 .control-panel{
-  /* display: inline-block; */
-  /* width: 40%; */
-  /* flex-direction: row; */
-  /* align-items: center; */
-  /* flex: 1 1 30%; */
   flex-flow: row wrap;
   color: white;
 }

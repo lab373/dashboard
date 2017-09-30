@@ -1,11 +1,11 @@
-// https://codepen.io/browles/pen/mPMBjw
-// https://codepen.io/anon/pen/boWedg
-// https://stackoverflow.com/questions/11932767/zoomable-google-finance-style-time-series-graph-in-d3-or-rickshaw
-// Spline fitting
-// Use cardinal
-// https://bl.ocks.org/mbostock/4342190
 (function(window) {
-  // Fitting solution
+  // See dbw_mkz_msgs for steering cmd rad range
+  const MAX_STEER = 8.2;
+
+  function normalize_and_shift_steer(steer) {
+    return steer/MAX_STEER + 0.5; 
+  }
+
   const h = window.innerHeight * 0.3;
   const w = window.innerWidth * 0.5;
 
@@ -15,17 +15,17 @@
   let time = 0;
   let num = 300;
 
-  // let noise = new SimplexNoise();
-  let seed = 50 + 100 * Math.random();
-  let data = [seed];
-  // let averages_50 = [0];
-  // let averages_25 = [0];
-  let deltas = [seed];
+  let data = [0];
+  let brake = [0];
+  let steer = [0];
 
-  let latestData = [seed];
-  // let latestAverages_50 = [0];
-  // let latestAverages_25 = [0];
-  let latestDeltas = [seed];
+  let deltas = [0];
+
+  let latestData = [0];
+  let latestBrake = [0];
+  let latestSteer = [0];
+
+  let latestDeltas = [0];
 
   let x = d3.scale.linear().range([0, x_axis_len]);
   let y = d3.scale.linear().range([y_axis_len, 0]);
@@ -48,8 +48,6 @@
   let line = d3.svg.line()
     .x((d, i) => x(i + time - num))
     .y(d => y(d));
-    // Sample usage of interpolation
-    //  .interpolate('cardinal')
 
   let svg_target = d3.select('#carla-telemetry');    
   let svg = svg_target.append('svg')
@@ -69,11 +67,11 @@
   let $data = svg.append('path')
     .attr('class', 'line data');
 
-  // let $averages_50 = svg.append('path')
-  //   .attr('class', 'line average-50');
+  let $brake = svg.append('path')
+    .attr('class', 'line brake');
 
-  // let $averages_25 = svg.append('path')
-  //   .attr('class', 'line average-25');
+  let $steer = svg.append('path')
+    .attr('class', 'line steer');
 
   let $rects = svg.selectAll('rect')
     .data(d3.range(num))
@@ -85,7 +83,7 @@
   let legend = svg.append('g')
     .attr('transform', `translate(20, 20)`)
     .selectAll('g')
-    .data([['Value', '#fff'], ['Trailing Average - 50', '#0ff'], ['Trailing Average - 25', '#ff0']])
+    .data([['Value', '#fff'], ['Brake', '#0ff'], ['Steer', '#ff0']])
     .enter()
       .append('g');
 
@@ -103,91 +101,53 @@
 
   function tick() {
     time++;
-    // data[time] = data[time - 1] + noise.noise2D(seed, time / 2);
-    // data[time] = Math.max(data[time], 0);
 
     data[time] = current_throttle;
-
-    // if (time <= 50) {
-    //   let a = 0;
-    //   for (let j = 0; j < time; j++) {
-    //     a += data[time - j];
-    //   }
-    //   a /= 50;
-    //   averages_50[time] = a;
-    // }
-    // else {
-    //   let a = averages_50[time - 1] * 50 - data[time - 50];
-    //   a += data[time];
-    //   a /= 50;
-    //   averages_50[time] = a;
-    // }
-
-    // if (time <= 25) {
-    //   let a = 0;
-    //   for (let j = 0; j < time; j++) {
-    //     a += data[time - j];
-    //   }
-    //   a /= 25;
-    //   averages_25[time] = a;
-    // }
-    // else {
-    //   let a = averages_25[time - 1] * 25 - data[time - 25];
-    //   a += data[time];
-    //   a /= 25;
-    //   averages_25[time] = a;
-    // }
+    // brake is provided as negative value
+    brake[time] = -current_brake;
+    steer[time] = normalize_and_shift_steer(current_steer);
 
     deltas[time] = data[time] - data[time - 1];
 
     if (time <= num) {
       latestData = data.slice(-num);
-      // latestAverages_50 = averages_50.slice(-num);
-      // latestAverages_25 = averages_25.slice(-num);
+      latestBrake = brake.slice(-num);
+      latestSteer = steer.slice(-num);
       latestDeltas = deltas.slice(-num);
+
     }
     else {
       latestData.shift();
-      // latestAverages_50.shift();
-      // latestAverages_25.shift();
+      latestBrake.shift();
+      latestSteer.shift();
+  
       latestDeltas.shift();
       latestData.push(data[time]);
-      // latestAverages_50.push(averages_50[time]);
-      // latestAverages_25.push(averages_25[time]);
+      latestBrake.push(brake[time]);
+      latestSteer.push(steer[time]);
+
       latestDeltas.push(deltas[time]);
     }
   }
 
   function update() {
     x.domain([time - num, time]);
-    // let yDom = d3.extent(latestData);
-    // yDom[0] = Math.max(yDom[0] - 1, 0);
-    // yDom[1] += 1;
-    // y.domain(yDom);
 
     $xAxis
       .call(xAxis);
 
-    // $yAxis
-    //   .call(yAxis);
-
-    // TODO: figure out how to do clean?
     $data
       .datum(latestData)
       .attr('d', line);
 
-    // $averages_50
-    //   .datum(latestAverages_50)
-    //   .attr('d', line);
+    $brake
+      .datum(latestBrake)
+      .attr('d', line);
 
-    // $averages_25
-    //   .datum(latestAverages_25)
-    //   .attr('d', line);
+    $steer
+      .datum(latestSteer)
+      .attr('d', line);
 
-    // $rects
-    //   .attr('height', (_, i) => Math.abs(latestDeltas[i] * h / 10))
-    //   .attr('fill', (_, i) => latestDeltas[i] < 0 ? 'red' : 'green')
-    //   .attr('y', (_, i) => h - Math.abs(latestDeltas[i] * h / 10) - 42);
     $rects
       .attr('height', (_, i) => Math.abs(latestData[i]))
       .attr('fill', (_, i) => 'red')

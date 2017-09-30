@@ -13,7 +13,6 @@
   window.current_image_zoomed = '';
 
   function on_steer_cmd(data) {
-    // data.steering_angle
     console.log('Steering: ', data);
     current_steer = Number(data.steering_angle);
   }
@@ -64,8 +63,9 @@
   }
 
   function on_current_pose(data) {
-    let _current_pose = data.current_pose.split(' ');
-    console.log('Current pose', _current_pose); 
+    window.current_pose = data.current_pose.split(' ');
+    console.log('Current pose', window._current_pose); 
+    update_pose(window._current_pose);
   }
 
   function on_current_velocity(data) {
@@ -113,7 +113,6 @@
     socket.emit(key, data);
   }
   
-  // socket.emit('downlink', { dl: 1 })
   window.COMM = {
     emit: emit
   }
