@@ -102,10 +102,10 @@
   function tick() {
     time++;
 
-    data[time] = current_throttle;
+    data[time] = window.current_throttle;
     // brake is provided as negative value
-    brake[time] = -current_brake;
-    steer[time] = normalize_and_shift_steer(current_steer);
+    brake[time] = -window.current_brake;
+    steer[time] = normalize_and_shift_steer(window.current_steer);
 
     deltas[time] = data[time] - data[time - 1];
 
