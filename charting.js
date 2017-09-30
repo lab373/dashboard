@@ -15,17 +15,15 @@
   let time = 0;
   let num = 300;
 
-  // let noise = new SimplexNoise();
-  let seed = 50 + 100 * Math.random();
-  let data = [seed];
+  let data = [0];
+  let brake = [0];
+  let steer = [0];
 
-  let deltas = [seed];
+  let deltas = [0];
 
-  let latestData = [seed];
+  let latestData = [0];
 
-
-  
-  let latestDeltas = [seed];
+  let latestDeltas = [0];
 
   let x = d3.scale.linear().range([0, x_axis_len]);
   let y = d3.scale.linear().range([y_axis_len, 0]);
@@ -99,6 +97,8 @@
     time++;
 
     data[time] = current_throttle;
+    // brake[time] = current_brake;
+    // steer[time] = current_steer;
 
     deltas[time] = data[time] - data[time - 1];
 
