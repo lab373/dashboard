@@ -7,9 +7,9 @@
   window.current_throttle = 0;
   window.current_base_waypoint = { x: [], y: [], linear: [], angular: []};
   window.current_dbw_status = false;
-  window.current_image = [];
-  window.current_pose = '';
-  window.current_velocity = '';
+  window.current_image = '';
+  window.current_pose = [];
+  window.current_velocity = 0;
   window.current_image_zoomed = '';
 
   function on_steer_cmd(data) {

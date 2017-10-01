@@ -26,7 +26,7 @@ text {
   stroke-width: 2px;
 }
 
-.data {
+.throttle {
   stroke: #fff;
   stroke-width: 2px;
 }
@@ -37,6 +37,10 @@ text {
 
 .steer {
   stroke: #ff0;
+}
+
+.velocity {
+  stroke: #f0f
 }
 
 #main-container {

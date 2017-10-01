@@ -1,9 +1,21 @@
 (function(window) {
   // See dbw_mkz_msgs for steering cmd rad range
+  // rad/s
   const MAX_STEER = 8.2;
+  // mph
+  const MAX_VELOCITY = 40;
+
+  // To [.., 1]
+  function normalize(max_val, val) {
+    return val/max_val;
+  }
 
   function normalize_and_shift_steer(steer) {
-    return steer/MAX_STEER + 0.5; 
+    return normalize(MAX_STEER, steer) + 0.5;
+  }
+
+  function normalize_velocity(velocity) {
+    return normalize(MAX_VELOCITY, velocity);
   }
 
   const h = window.innerHeight * 0.3;
@@ -15,15 +27,17 @@
   let time = 0;
   let num = 300;
 
-  let data = [0];
+  let throttle = [0];
   let brake = [0];
   let steer = [0];
+  let velocity = [0];
 
   let deltas = [0];
 
-  let latestData = [0];
+  let latestThrottle = [0];
   let latestBrake = [0];
   let latestSteer = [0];
+  let latestVelocity = [0];
 
   let latestDeltas = [0];
 
@@ -64,14 +78,18 @@
     .attr('class', 'y axis')
     .call(yAxis);
 
-  let $data = svg.append('path')
-    .attr('class', 'line data');
+  // D3 Data entry
+  let $throttle = svg.append('path')
+    .attr('class', 'line throttle');
 
   let $brake = svg.append('path')
     .attr('class', 'line brake');
 
   let $steer = svg.append('path')
     .attr('class', 'line steer');
+
+  let $velocity = svg.append('path')
+    .attr('class', 'line velocity')
 
   let $rects = svg.selectAll('rect')
     .data(d3.range(num))
@@ -83,9 +101,9 @@
   let legend = svg.append('g')
     .attr('transform', `translate(20, 20)`)
     .selectAll('g')
-    .data([['Value', '#fff'], ['Brake', '#0ff'], ['Steer', '#ff0']])
+    .data([['Throttle', '#fff'], ['Brake', '#0ff'], ['Steer', '#ff0'], ['Velocity', '#f0f']])
     .enter()
-      .append('g');
+    .append('g');
 
     legend
       .append('circle')
@@ -102,29 +120,35 @@
   function tick() {
     time++;
 
-    data[time] = window.current_throttle;
-    // brake is provided as negative value
-    brake[time] = -window.current_brake;
+    throttle[time] = window.current_throttle;
+    // brake is provided as negative value in torque
+    // positive in percentage
+    brake[time] = window.current_brake;
     steer[time] = normalize_and_shift_steer(window.current_steer);
+    velocity[time] = normalize_velocity(window.current_velocity); 
 
-    deltas[time] = data[time] - data[time - 1];
+    deltas[time] = throttle[time] - throttle[time - 1];
 
     if (time <= num) {
-      latestData = data.slice(-num);
+      latestThrottle = throttle.slice(-num);
       latestBrake = brake.slice(-num);
       latestSteer = steer.slice(-num);
+      latestVelocity = velocity.slice(-num);
       latestDeltas = deltas.slice(-num);
 
     }
     else {
-      latestData.shift();
+      latestThrottle.shift();
       latestBrake.shift();
       latestSteer.shift();
+      latestThrottle.shift();
   
       latestDeltas.shift();
-      latestData.push(data[time]);
+
+      latestThrottle.push(throttle[time]);
       latestBrake.push(brake[time]);
       latestSteer.push(steer[time]);
+      latestThrottle.push(velocity[time]);
 
       latestDeltas.push(deltas[time]);
     }
@@ -136,8 +160,8 @@
     $xAxis
       .call(xAxis);
 
-    $data
-      .datum(latestData)
+    $throttle
+      .datum(latestThrottle)
       .attr('d', line);
 
     $brake
@@ -149,9 +173,9 @@
       .attr('d', line);
 
     $rects
-      .attr('height', (_, i) => Math.abs(latestData[i]))
+      .attr('height', (_, i) => Math.abs(latestThrottle[i]))
       .attr('fill', (_, i) => 'red')
-      .attr('y', (_, i) => h - Math.abs(latestData[i] * h/2) - 40);
+      .attr('y', (_, i) => h - Math.abs(latestThrottle[i] * h/2) - 40);
   }
 
   for (let i = 0; i < num + 50; i++) {
