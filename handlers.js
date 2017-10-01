@@ -64,13 +64,14 @@
 
   function on_current_pose(data) {
     window.current_pose = data.current_pose.split(' ');
-    console.log('Current pose', window._current_pose); 
-    update_pose(window._current_pose);
+    console.log('Current pose', window.current_pose); 
+    update_pose(window.current_pose);
   }
 
   function on_current_velocity(data) {
-    let _current_velocity = data.current_velocity.split(' ');
-    console.log('Current Velocity', _current_velocity);
+    window.current_velocity = data.current_velocity.split(' ');
+    console.log('Current Velocity', current_velocity);
+    update_velocity(window.current_velocity)
   }
 
   // It seems image zoomed is not working
