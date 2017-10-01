@@ -69,8 +69,9 @@
   }
 
   function on_current_velocity(data) {
-    let _current_velocity = data.current_velocity.split(' ');
+    window.current_velocity = data.current_velocity.split(' ');
     console.log('Current Velocity', current_velocity);
+    update_velocity(window.current_velocity)
   }
 
   // It seems image zoomed is not working

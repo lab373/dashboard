@@ -28,4 +28,5 @@
 
   window.post_image = post_image;
   window.update_pose = update_pose;
+  window.update_velocity = update_velocity;
 })(window)
