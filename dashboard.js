@@ -22,8 +22,8 @@
       console.warn('Empty Velocity!');
       return;
     }
-    document.getElementById('linear-velocity').innerHTML = 'Linear: ' + velocity[0];
-    document.getElementById('angular-velocity').innerHTML = 'Angular: ' + velocity[1];
+    document.getElementById('linear-velocity').innerHTML = 'Linear: ' + velocity[0] + ' m/s';
+    document.getElementById('angular-velocity').innerHTML = 'Angular: ' + velocity[1] + ' rad/s';
   }
 
   window.post_image = post_image;
