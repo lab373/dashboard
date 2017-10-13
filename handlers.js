@@ -1,5 +1,6 @@
 (function(window) {
   let ros_server_port = '4567';
+  let domain = document.domain || '127.0.0.1';
   let socket = io.connect('http://' + document.domain + ':' + ros_server_port);
 
   window.current_steer = 0;
